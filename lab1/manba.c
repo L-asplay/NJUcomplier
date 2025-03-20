@@ -18,9 +18,9 @@ Node* CreateNode(int t, int l, char *lex, char *s) {
     }
 
     if (strcmp(lex, "FLOAT") == 0) 
-    sscanf(s, "%f", &(node->fval));
+      node->fval = atof(s);
     else if (strcmp(lex, "INT") == 0) 
-    sscanf(s, "%u", &(node->uval));
+      node->uval = atoi(s);
     
     node->bros = NULL;
     node->kids = NULL;
