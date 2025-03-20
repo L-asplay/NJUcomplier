@@ -57,6 +57,7 @@ Specifier : TYPE { $$ = CreateNode(0, @$.first_line, "Specifier", emp); BuildTre
   
 StructSpecifier : STRUCT OptTag LC DefList RC { $$ = CreateNode(0, @$.first_line, "StructSpecifier", emp); BuildTree($$, 5, $1, $2, $3, $4, $5); }
   | STRUCT Tag { $$ = CreateNode(0, @$.first_line, "StructSpecifier", emp); BuildTree($$, 2, $1, $2); }
+  |  STRUCT error RC { $$ = NULL; syntax_bool = 1; }
   ;
   
 OptTag : ID { $$ = CreateNode(0, @$.first_line, "OptTag", emp); BuildTree($$, 1, $1); } 
@@ -77,6 +78,7 @@ VarDec : ID { $$ = CreateNode(0, @$.first_line, "VarDec", emp); BuildTree($$, 1,
 FunDec : ID LP VarList RP { $$ = CreateNode(0, @$.first_line, "FunDec", emp); BuildTree($$, 4, $1, $2, $3, $4); }
   | ID LP RP { $$ = CreateNode(0, @$.first_line, "FunDec", emp); BuildTree($$, 3, $1, $2, $3); }
   | ID LP error RP { $$ = NULL; syntax_bool = 1; }
+  | ID error RP { $$ = NULL; syntax_bool = 1; }
   ;
 
 VarList : ParamDec COMMA VarList { $$ = CreateNode(0, @$.first_line, "VarList", emp); BuildTree($$, 3, $1, $2, $3); }
@@ -114,6 +116,7 @@ DefList : Def DefList { $$ = CreateNode(0, @$.first_line, "DefList", emp); Build
   ;
 
 Def : Specifier DecList SEMI { $$ = CreateNode(0, @$.first_line, "Def", emp); BuildTree($$, 3, $1, $2, $3); }
+  | Specifier error SEMI { $$ = NULL; syntax_bool = 1; } 
   ;
 
 DecList : Dec { $$ = CreateNode(0, @$.first_line, "DecList", emp); BuildTree($$, 1, $1); }
@@ -145,6 +148,14 @@ Exp : Exp ASSIGNOP Exp { $$ = CreateNode(0, @$.first_line, "Exp", emp); BuildTre
   | ID { $$ = CreateNode(0, @$.first_line, "Exp", emp); BuildTree($$, 1, $1); }
   | INT { $$ = CreateNode(0, @$.first_line, "Exp", emp); BuildTree($$, 1, $1); }
   | FLOAT { $$ = CreateNode(0, @$.first_line, "Exp", emp); BuildTree($$, 1, $1); }
+  | Exp ASSIGNOP error SEMI  { $$ = NULL; syntax_bool = 1; }
+  | Exp AND error SEMI   { $$ = NULL; syntax_bool = 1; }
+  | Exp OR error SEMI   { $$ = NULL; syntax_bool = 1; }
+  | Exp RELOP error SEMI   { $$ = NULL; syntax_bool = 1; }
+  | Exp PLUS error SEMI  { $$ = NULL; syntax_bool = 1; }
+  | Exp MINUS error SEMI   { $$ = NULL; syntax_bool = 1; }
+  | Exp STAR error SEMI   { $$ = NULL; syntax_bool = 1; }
+  | Exp DIV error SEMI   { $$ = NULL; syntax_bool = 1; }
   | ID LP error RP { $$ = NULL; syntax_bool = 1; }
   | Exp LB error RB { $$ = NULL; syntax_bool = 1; }
   ;
