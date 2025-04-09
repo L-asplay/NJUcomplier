@@ -538,21 +538,7 @@ Node* TreeFind(Node* r, char* name) {
 
 int CheckLeft(Node* exp) {
     if (exp == NULL) return 0;
-    // Exp → ID
-    Node* NodeId = TreeFind(exp, "ID");
-    if (NodeId != NULL) {
-       if (exp->kids == NodeId && NodeId->bros == NULL) 
-         return 1;
-       else return 0;
-    }
-    // Exp → Exp LB Exp RB
-    Node* NodeLb = TreeFind(exp, "LB");
-    if (NodeLb != NULL) {
-       Type ty = Exp(exp->kids);
-       if (ty != NULL || ty->kind == ARRAY) 
-          return 1;
-       return 0; 
-    }
+
     // Exp → Exp DOT ID
     Node* NodeDot = TreeFind(exp, "DOT");
     if (NodeDot != NULL) {
@@ -569,6 +555,22 @@ int CheckLeft(Node* exp) {
             t = t->tail;
         }
         return 0; 
+    }
+    
+    // Exp → ID
+    Node* NodeId = TreeFind(exp, "ID");
+    if (NodeId != NULL) {
+       if (exp->kids == NodeId && NodeId->bros == NULL) 
+         return 1;
+       else return 0;
+    }
+    // Exp → Exp LB Exp RB
+    Node* NodeLb = TreeFind(exp, "LB");
+    if (NodeLb != NULL) {
+       Type ty = Exp(exp->kids);
+       if (ty != NULL || ty->kind == ARRAY) 
+          return 1;
+       return 0; 
     }
     return 0; // else
 }
